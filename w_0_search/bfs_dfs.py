@@ -2,9 +2,10 @@ import sys
 
 
 class Node():
-    def __init__(self, state, parent, action, path_cost=None):
+    def __init__(self, state, parent, action, child = None, path_cost=None):
         self.state = state
         self.parent = parent
+        self.child = child
         self.action = action
         self.path_cost = path_cost
 
@@ -13,9 +14,11 @@ class StackFrontier():
     """DFS"""
     def __init__(self):
         self.frontier = []
+        self.explored = set()
     
     def add(self, node):
-        self.frontier.append(node)
+        if node not in self.explored:
+            self.frontier.append(node)
         
     def contains_state(self, state):
         return any(node.state == state for node in self.frontier)
