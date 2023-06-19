@@ -13,6 +13,11 @@ people = {}
 movies = {}
 
 
+class BasicNode(Node):
+    def __init__(self, state, parent):
+        super().__init__(state, parent, None)
+    
+
 def load_data(directory):
     """
     Load data from CSV files into memory.
@@ -84,23 +89,26 @@ def main():
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
 
-def shortest_path(source: int, target: int) -> list[tuple]:
+def shortest_path(source: str, target: str) -> list[tuple]:
     """
     Returns the shortest list of (movie_id, person_id) pairs
     that connect the source to the target.
 
     If no possible path, returns None.
     """
+    # TODO by my knowelage all ids should be loaded as int's and operating in rest of code on ints would increase performance and speed. - like indecies in dbs. If there is explonation why they re loaded as str i would be happy to learn
     # find shortest way to target
-    # retrive (movie_id, star_id) tuplest way back to source
-    #   
     # init state, frontier
-    start = Node(state=source, parent=None, action=None)
+    #   *node.state = (movie_id, person_id)
+    start = BasicNode(state=(None, source), parent=None)
     frontier = QueueFrontier()
     frontier.add(start)
     
     # track explored nodes
     explored = set()
+    
+    # init solution 
+    solution = []
     
     # look for solution
     while True:
@@ -109,16 +117,30 @@ def shortest_path(source: int, target: int) -> list[tuple]:
         if not frontier:
             return None
 
-        node = frontier.
-
-    
-    
-    
-    
-
-    # TODO
-    raise NotImplementedError
-
+        node = frontier.remove()
+        explored.add(node.state[1])
+       
+        # for each neighbour create node and and to rontier if not explored:
+        for star_movie in neighbors_for_person(node.state[1]):
+            if star_movie[1] in explored:
+                continue
+            child = BasicNode(state=star_movie, parent=node)
+            
+            # retrive (movie_id, star_id) tuplest way back to source 
+            # if found 
+            if target == child.state[1]:
+                # solution.append(child.state)
+                # from target follow parets and append data to solution list
+                while child.parent:
+                    solution.append((child.state))
+                    child = child.parent
+                
+                return solution
+            
+            # if not found add to frontier
+            frontier.add(child)
+                
+                  
 
 def person_id_for_name(name):
     """
